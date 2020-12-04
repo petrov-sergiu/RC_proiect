@@ -1,7 +1,3 @@
-# This is a sample Python script.
-
-# Press Shift+F10 to execute it or replace it with your code.
-# Press Double Shift to search everywhere for classes, files, tool windows, actions, and settings.
 import tkinter as tk
 from tkinter import ttk
 
@@ -39,7 +35,7 @@ class Interfata(tk.Frame):
         buton_confirmare = ttk.Checkbutton(confirmabil_label, text="Confirmabil")
 
         retea_label.grid(row=1, column=14, sticky=tk.SE, pady=2)
-        retea_entry.grid(row=1, column=15,sticky=tk.SE, pady=2)
+        retea_entry.grid(row=1, column=15, sticky=tk.SE, pady=2)
 
         locatie_label.grid(row=3, column=14, sticky=tk.SE, pady=2)
         locatie_entry.grid(row=3, column=15, sticky=tk.SE, pady=2)
@@ -68,10 +64,3 @@ class Aplicatie(tk.Tk):
         self.resizable(width=False, height=False)
 
         Interfata(self).grid()
-
-
-app = Aplicatie()
-app.config(background="#ADD8E6")
-app.mainloop()
-
-
