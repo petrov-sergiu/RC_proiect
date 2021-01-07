@@ -23,7 +23,7 @@ class Mesaj:
             self.packet = self.packet+( str(self.message)).encode('UTF-8')
         return self.packet
 
-    def setToken(self, header, a):
+    def setToken(self, header, a):  #cine este a?
         if 0 < header.getTokenLength() <= 8:
             self.token = format(a, '0'+str(header.getTokenLength()*8)+'b')
     def getToken(self):

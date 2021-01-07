@@ -2,6 +2,7 @@ from Header import Header
 from Mesaj import Mesaj
 
 
+
 ip = '0.0.0.0'
 port = 4321
 version = 1
@@ -16,6 +17,6 @@ header.print()
 
 
 package = Mesaj()
-package.createPacket(header, "MESAJ")
+package.createPacket(header, " MESAJ")
 print(package.getPackege())
 print("Token= " + str(package.getToken()))

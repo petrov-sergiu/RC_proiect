@@ -7,5 +7,3 @@ from Interfata import Aplicatie
 app = Aplicatie()
 app.config(background="#ADD8E6")
 app.mainloop()
-
-
