@@ -6,10 +6,10 @@ from random import randint
 import threading
 
 
-COAP_DEFAULT_PORT = 4321
-COAP_DEFAULT_VERSION = 2
-COAP_DEFAULT_TOKENL = 4
-COAP_BUFFER_MAX_SIZE = 1024
+COAP_DEFAULT_PORT = 4321 #nr portului
+COAP_DEFAULT_VERSION = 2 #versiunea
+COAP_DEFAULT_TOKENL = 4 #dimensiunea tokenului
+COAP_BUFFER_MAX_SIZE = 1024 #dimensiunea bufferului
 
 COAP_DEFAULT_AKC_TIMEOUT = 2
 COAP_DEFAULT_AKC_RANDOM_FACTOR = 1.5
@@ -48,11 +48,11 @@ class Coap:
             print('Exceptie la trimiterea pachetului!!!!')
         return status
 
-    def send(self, ip, port, version, typ, tokenL,  metoda, token, payload):#functie de trimitere cu parametri adresa ip, portul, versiunea, tipul, dimensiune token, metoda, token-ul, data
+    def send(self, ip, port, versiune, tip, tokenLen,  metoda, token, payload):#functie de trimitere cu parametri adresa ip, portul, versiunea, tipul, dimensiune token, metoda, token-ul, data
         header=Header() #creare header
-        header.setHeader(version, typ, tokenL) #stabilirea/crearea header-ului
-        #token=randint(0, 65536) #token ia o valoare aleatoare data de un random
-        #header.setToken(token)
+        header.setHeader(versiune, tip, tokenLen) #stabilirea/crearea header-ului
+        token=randint(0, 65536) #token ia o valoare aleatoare data de un random
+        header.setToken(token)
         header.setCode(0, metoda) #stabilirea codului metodei utilizate
         return self.sendEx(ip, port,header, payload)
 
@@ -67,7 +67,7 @@ class Coap:
         header.setHeader(version, COAP_TYPE.COAP_ACK,tokenL) #setare header cu versiunea, mesajul de ACK si dim token-ului
         header.setCode(code[0], code[1]) #stabilirea codului
         header.setMessageId(mesajid) #setarea id-ului mesajului 16 biti
-        #header.setToken(token)
+        header.setToken(token)
         header.buildHeader() #construirea header-ului
 
         return self.sendPacket(ip, port, header, payload)  #trimiterea pachetului
@@ -79,17 +79,17 @@ class Coap:
         except Exception:
             return None, None
 
-    def get(self, ip, port, url, typ):
-        return threading.Thread(target = self.send(ip, port, COAP_DEFAULT_VERSION, typ, 4, COAP_METHOD.COAP_GET, 0, url)).start()
+    def get(self, ip, port, url, tip):
+        return threading.Thread(target=self.send(ip, port, COAP_DEFAULT_VERSION, tip, 4, COAP_METHOD.COAP_GET, 0, url)).start()
 
 
-    def post(self, ip, port, url,type ):
-        return threading.Thread(target = self.send(ip, port, COAP_DEFAULT_VERSION,type, 4, COAP_METHOD.COAP_POST, 0, url )).start()
+    def post(self, ip, port, url,tip ):
+        return threading.Thread(target=self.send(ip, port, COAP_DEFAULT_VERSION, tip, 4, COAP_METHOD.COAP_POST, 0, url)).start()
 
     def handleResponse(self, header, mesaj):
         header.print()
         self.result ="Mesajul este "+ str(mesaj)
-        print("Mesajul receptionat de la server "+ str(mesaj))
+        print("Mesajul receptionat de la server este: "+ str(mesaj))
 
     def getResult(self): #functie pentru obtinerea rezultatului
         return self.result
@@ -99,7 +99,7 @@ class Coap:
         header.setHeader(COAP_DEFAULT_VERSION, COAP_TYPE.COAP_ACK, COAP_DEFAULT_TOKENL)
         header.setCode(0, 0)
         header.setMessageId(mesajid)
-        #header.setToken(token)
+        header.setToken(token)
         header.buildHeader()
         self.sendPacket(ip, port, header, "") #trimiterea pachetului catre server
 
@@ -134,7 +134,36 @@ class Coap:
             return self.codePut(headerSent)
 
     def loop(self, ip, port, header, mesaj, retransmit):
-        global headerRcv
+        global headerRecive
+        #Cand se trimite CON
+        print("Se trimite CON!")
+        self.sendPacket(ip, port, header, mesaj)
+
+        r,_,_=select.select([self.socket], [], [], COAP_DEFAULT_AKC_TIMEOUT)
+        #Astept pt ACK
+        if not r:
+            print("Nu s-a primit niciun ACK de la server!")
+            print("Trimit din nou CON!")
+            retransmit=retransmit-1
+
+            #Se trimite CON catre server pana cand se primeste ACK sau pana cand retransmit=0
+            if retransmit != 0:
+                self.loop(ip, port, header, mesaj, retransmit)
+            else:
+                print("Am trimis catre server "+ str(COAP_DEFAULT_MAX_RETRANSMIT) + " CON-uri. Nu am primit nimic de la server!")
+        else:
+            #Cand se trimite NONCON
+            print("Se trimite NONCON")
+            self.sendPacket(ip, port, header, mesaj)
+
+            #Astept raspuns
+            r,_,_=select.select([self.socket], [], [], COAP_DEFAULT_AKC_TIMEOUT)
+            if not r:
+                print("Nu s-a primit nimic de la server!")
+            else:
+                headerRecive=Header()
+                mesaj=Mesaj()
+
 
 
 

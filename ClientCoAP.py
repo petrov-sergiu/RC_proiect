@@ -11,7 +11,7 @@ class Client(threading.Thread):
         self.message = ""
 
     def run(self):
-        self.coap.get(self.ip, self.port, 'Score')
+        self.coap.get(self.ip, self.port, 'MESAJ')
         self.message = self.coap.getResult()
 
     def returnMessage(self):
