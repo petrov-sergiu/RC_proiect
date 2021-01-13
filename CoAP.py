@@ -135,22 +135,61 @@ class Coap:
 
     def loop(self, ip, port, header, mesaj, retransmit):
         global headerRecive
-        #Cand se trimite CON
-        print("Se trimite CON!")
-        self.sendPacket(ip, port, header, mesaj)
+        if header.getMessageId()==COAP_TYPE.COAP_CON:
+            #Cand se trimite CON
+            print("Se trimite CON!")
+            self.sendPacket(ip, port, header, mesaj)
 
-        r,_,_=select.select([self.socket], [], [], COAP_DEFAULT_AKC_TIMEOUT)
-        #Astept pt ACK
-        if not r:
-            print("Nu s-a primit niciun ACK de la server!")
-            print("Trimit din nou CON!")
-            retransmit=retransmit-1
+            r,_,_=select.select([self.socket], [], [], COAP_DEFAULT_AKC_TIMEOUT)
+            #Astept pt ACK
+            if not r:
+                print("Nu s-a primit niciun ACK de la server!")
+                print("Trimit din nou CON!")
+                retransmit=retransmit-1
 
-            #Se trimite CON catre server pana cand se primeste ACK sau pana cand retransmit=0
-            if retransmit != 0:
-                self.loop(ip, port, header, mesaj, retransmit)
+                #Se trimite CON catre server pana cand se primeste ACK sau pana cand retransmit=0
+                if retransmit != 0:
+                    self.loop(ip, port, header, mesaj, retransmit)
+                else:
+                    print("Am trimis catre server "+ str(COAP_DEFAULT_MAX_RETRANSMIT) + " CON-uri. Nu am primit nimic de la server!")
             else:
-                print("Am trimis catre server "+ str(COAP_DEFAULT_MAX_RETRANSMIT) + " CON-uri. Nu am primit nimic de la server!")
+                #Am primit ACK
+                headerRecive=Header()
+                buffer=Mesaj()
+                (data, addr)=self.readBytesFromSocket(COAP_BUFFER_MAX_SIZE)
+                buffer.set(data)
+                (header1, mesaj)=buffer.despachetarePacket()
+                headerRecive.setHeader(header1)
+                headerRecive.buildHeader()
+                headerRecive.setCode(headerRecive.getCodeClass(), headerRecive.getCodeDetail())
+
+            if headerRecive.getMessageId()==header.getCode() != 0:
+                if self.verifyCodeReceive(header, headerRecive):
+                    print("Se iese din program!")
+                    return
+                return self.handleResponse(headerRecive, mesaj)
+            else:
+                r,_,_=select.select([self.socket],[],[],COAP_DEFAULT_TIMEOUT)
+                if not r:
+                    print("Nu am primit niciun raspuns!")
+                else:
+                    print("Mesajul primit este gol! Mesajul are token-ul:"+str(header.getToken()))
+                    headerRecive=Header()
+                    mesaj1=Mesaj()
+
+                    (buffer, addr)=self.readBytesFromSocket(COAP_BUFFER_MAX_SIZE)
+                    mesaj.set(buffer)
+
+                    (header1, mesaj)=mesaj1.despachetarePacket()
+                    headerRecive.setHeader(header1)
+                    headerRecive.buildHeader()
+                    print(str(headerRecive.getMessageType()))
+                    if headerRecive.getMessageType()==COAP_TYPE.COAP_CON:
+                        print("Am trimis ACK!")
+                        print(str(headerRecive.getMessageId()))
+                        self.sendACK(ip, port, headerRecive.getMessageId(), headerRecive.getToken())
+                    return self.handleResponse(headerRecive, mesaj)
+
         else:
             #Cand se trimite NONCON
             print("Se trimite NONCON")
@@ -162,7 +201,7 @@ class Coap:
                 print("Nu s-a primit nimic de la server!")
             else:
                 headerRecive=Header()
-                mesaj=Mesaj()
+                mesaj1=Mesaj()
 
 
 
