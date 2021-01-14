@@ -202,6 +202,17 @@ class Coap:
             else:
                 headerRecive=Header()
                 mesaj1=Mesaj()
+                (buffer, addr)=self.readBytesFromSocket(COAP_BUFFER_MAX_SIZE)
+                mesaj1.set(buffer)
+
+                (header1, mesaj)=mesaj1.despachetarePacket()
+                headerRecive.setHeader(header1)
+                headerRecive.buildHeader()
+
+                if headerRecive.getMessageType()==COAP_TYPE.COAP_CON:
+                    self.sendACK(ip, port, headerRecive.getMessageId(), headerRecive.getToken())
+                    print(str(headerRecive.getMessageId())+str(headerRecive.getToken()))
+                return self.handleResponse(headerRecive, mesaj)
 
 
 

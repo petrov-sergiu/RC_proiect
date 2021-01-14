@@ -2,18 +2,17 @@ def enum(**enums):
     return type('Enum', (), enums)
 
 def CoapResponseCode(class_, detail):
-    """ """
     return ((class_ << 5) | (detail))
 
 COAP_TYPE = enum(
-    COAP_CON=1,
-    COAP_NONCON=0,
+    COAP_CON=0,
+    COAP_NONCON=1,
     COAP_ACK=2,
     COAP_RESET=3
 )
 
 COAP_METHOD = enum(
-    COAP_EMPTY = 0,
+    COAP_EMPTY=0,
     COAP_GET=1,
     COAP_POST=2
 )
@@ -39,7 +38,7 @@ COAP_RESPONSE_CODE = enum(
     COAP_BAD_GATEWAY=[5, 2],
     COAP_SERVICE_UNAVALIABLE=[5, 3],
     COAP_GATEWAY_TIMEOUT=[5, 4],
-    #COAP_PROXYING_NOT_SUPPORTED=CoapResponseCode(5, 5)
+    COAP_PROXYING_NOT_SUPPORTED=CoapResponseCode(5, 5)
 )
 
 class Header:
@@ -63,7 +62,7 @@ class Header:
         self.code = None
 
     def setToken(self, tk):
-        if( (self.getTokenLength()>0)  and (self.getTokenLength()<8) ):
+        if((self.getTokenLength()>0) and (self.getTokenLength()<8)):
             self.token=format(tk, '0'+ str(self.getTokenLength()*8 + 'b'))
 
     def setHeader(self, version, typ, tokenLength):

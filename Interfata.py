@@ -53,6 +53,14 @@ class Interfata(tk.Frame):
         buton_confirmare.grid(row=11, column=15, sticky=tk.SE, pady=2)
 
         buton_pornire.grid(row=13, column=15, sticky=tk.SE, columnspan = 2)
+    def change(self):
+        global host, port, resource, request, confirmable
+
+        if ((self.retea != "") and (self.port !="") and (self.resursa !="") and (self.metoda !="")):
+            host, port, resource, request, confirmable=self.data()
+            self.out.set(console)
+    def takeData(self):
+        return self.retea.get(), self.port.get(), self.resursa.get(), self.metoda.get(), self.confirmabil.get()
 
 
 class Aplicatie(tk.Tk):
@@ -64,3 +72,11 @@ class Aplicatie(tk.Tk):
         self.resizable(width=False, height=False)
 
         Interfata(self).grid()
+
+
+    def takeData(self):
+        return host, port, resource, request, confirmable
+    def update(self, data):
+        global console
+        self.data+=data
+        console=data
