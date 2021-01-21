@@ -3,25 +3,20 @@ from random import randint
 
 class Mesaj:
     def __init__(self):
-        self.header = ""
-        self.message = ""
-        self.token = ""
         self.packet = ""
 
-    def set(self, packet):
+    def setPack(self, packet):
         self.packet = packet
 
-    def createPacket(self, header, mesasage):
-        self.header = header
-        self.message = mesasage
-        self.token = randint(0, 65536)
-        self.packet = ("" + str(header.header)).encode('UTF-8')
+    def createPacket(self, header, message):
+        self.packet = ("" + str(header.getHeader())).encode('UTF-8')
         if 0 < header.getTokenLength() <= 8:
-            self.packet = self.packet+(str(self.token)).encode('UTF-8')
-        if mesasage != "":
-            self.packet = self.packet+(str(self.message)).encode('UTF-8')
+            header.setToken(randint(0, pow(2, header.getTokenLength())))
+            self.packet = self.packet + (str(header.token)).encode('UTF-8')
+        if message != "":
+            self.packet = self.packet+(str(message)).encode('UTF-8')
         return self.packet
-
+##############///////////////////
     def despachetarePacket(self):
         despachetare=self.packet.decode('UTF-8')
         tokenLen=4

@@ -16,13 +16,13 @@ class Header:
         # 16 bit
         self.messageId = 0
         #8biti
-        self.token=0
+        self.token = ''
 
         self.code = None
 
     def setToken(self, tk):
         if((self.getTokenLength()>0) and (self.getTokenLength()<8)):
-            self.token=format(tk,  str('0'+self.getTokenLength()*8 + 'b'))
+            self.token=format(tk,  str('0'+str(self.getTokenLength()*8) + 'b'))
 
     def setHeader(self, version, typ, tokenLength):
         self.version = format(version, '02b')

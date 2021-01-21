@@ -12,7 +12,7 @@ coap.start()
 
 ip = '127.0.0.1'
 
-port = 20001
+port = 5006
 
 def task():
     app.after(2000, task)

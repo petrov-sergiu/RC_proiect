@@ -1,5 +1,7 @@
 import tkinter as tk
 from tkinter import ttk
+from CoAP import *
+
 console="alfa"
 class Interfata(tk.Frame):
     def __init__(self, parent, *args, **kwargs):
@@ -59,6 +61,8 @@ class Interfata(tk.Frame):
 
         buton_pornire.grid(row=13, column=15, sticky=tk.SE, columnspan = 2)
         output_label.grid(row=15, column=0, columnspan=3)
+
+
     def change(self):
         global host, port, resource, request, confirmable
 
@@ -66,6 +70,14 @@ class Interfata(tk.Frame):
             host, port, resource, request, confirmable=self.takeData()
             self.out.set(console)
         print("conectare")
+        (h, p, r, m, c) = self.takeData()
+        print("cererea citita de pe interfata", r)
+        print(m)
+        run(h, p, r, m, c)
+        app.update(text)
+
+
+
     def takeData(self):
         return self.retea.get(), self.port.get(), self.resursa.get(), self.metoda.get(), self.confirmabil.get()
 
@@ -89,3 +101,35 @@ class Aplicatie(tk.Tk):
         global console
         self.data += data
         console=data
+
+
+text = ""
+app = Aplicatie()
+coap = Coap()
+coap.start()
+
+ip = '127.0.0.1'
+
+port = 5006
+
+
+
+def run(my_host, my_port, my_cerere, my_metoda, my_type):
+    global text
+    print("HELLO")
+    if not my_cerere:
+        coap.get(ip, port, "Score", COAP_TYPE.COAP_NONCON)
+    else:
+        if my_metoda == "GET":
+            coap.get(my_host, my_port, str(my_cerere), my_type)
+        elif my_metoda == "POST":
+            coap.post(my_host, my_port, str(my_cerere), my_type)
+
+
+    text = coap.getResult()
+
+
+
+if __name__ == '__main__':
+    app.config(background="#ADD8E6")
+    app.mainloop()

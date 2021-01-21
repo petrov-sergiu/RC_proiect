@@ -49,7 +49,7 @@ pack.createPacket(header, "Mesaj1")
 print(pack.getPackege())
 
 r=Coap()
-r.start('127.0.0.1', 20001)
+r.start('127.0.0.1', 5006)
 
 #hreading.Thread(target=r.send("127.0.0.1", 20001, COAP_DEFAULT.VERSION, 10, 4, COAP_METHOD.COAP_GET, 0, url)).start()
 
