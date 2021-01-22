@@ -115,7 +115,7 @@ def run(my_host, my_port, my_cerere, my_metoda, my_type):
     global text
     print("HELLO")
     if not my_cerere:
-        coap.get(ip, port, "Score", COAP_TYPE.COAP_NONCON)
+        coap.get(ip, port, "Mesaj", COAP_TYPE.COAP_NONCON)
     else:
         if my_metoda == "GET":
             coap.get(my_host, my_port, str(my_cerere), my_type)
