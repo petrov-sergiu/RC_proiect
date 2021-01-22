@@ -208,9 +208,6 @@ class Coap:
                 headerRecive.setHeader(header1)
                 headerRecive.buildHeader()
 
-                if headerRecive.getMessageType()==COAP_TYPE.COAP_CON:
-                    self.sendACK(ip, port, headerRecive.getMessageId(), headerRecive.getToken())
-                    print(str(headerRecive.getMessageId())+str(headerRecive.getToken()))
                 return self.handleResponse(headerRecive, mesaj)
 
 

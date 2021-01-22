@@ -32,12 +32,12 @@ class Interfata(tk.Frame):
         port_label = ttk.Label(self, text="Port", foreground="#0000A0", background="#ADD8E6")
         resursa_label = ttk.Label(self, text="Resursa", foreground="#0000A0", background="#ADD8E6")
         metoda_label = ttk.Label(self, text="Metoda", foreground="#0000A0", background="#ADD8E6")
-        confirmabil_label = ttk.Label(self, text="Confirmabil", foreground="#0000A0", background="#ADD8E6")
+        confirmabil_label = ttk.Label(self, text="NON-Confirmabil", foreground="#0000A0", background="#ADD8E6")
 
         output_label = ttk.Label(self, textvariable=self.out, wraplength=600)
 
         buton_pornire = ttk.Button(self, text="Porneste aplicatia", command=self.change)
-        buton_confirmare = ttk.Checkbutton(confirmabil_label, text="Confirmabil", variable=self.confirmabil)
+        buton_confirmare = ttk.Checkbutton(confirmabil_label, text="NON-Confirmabil", variable=self.confirmabil)
 
         retea_label.grid(row=1, column=14, sticky=tk.SE, pady=2)
         retea_entry.grid(row=1, column=15, sticky=tk.SE, pady=2)
