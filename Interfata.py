@@ -9,7 +9,6 @@ class Interfata(tk.Frame):
         super().config(background="#ADD8E6")
 
         self.retea = tk.StringVar()
-        self.locatie = tk.StringVar()
         self.port = tk.IntVar()
         self.resursa = tk.StringVar()
         self.metoda = tk.StringVar()
@@ -25,10 +24,10 @@ class Interfata(tk.Frame):
         combobox_metoda.current(0)
 
         retea_label = ttk.Label(self, text="Retea", foreground="#0000A0", background="#ADD8E6")
-        locatie_label = ttk.Label(self, text ="Locatie", foreground="#0000A0", background="#ADD8E6")
+
 
         retea_entry = ttk.Entry(self, textvariable=self.retea)
-        locatie_entry = ttk.Entry(self, textvariable = self.locatie)
+
 
         port_label = ttk.Label(self, text="Port", foreground="#0000A0", background="#ADD8E6")
         resursa_label = ttk.Label(self, text="Resursa", foreground="#0000A0", background="#ADD8E6")
@@ -43,8 +42,6 @@ class Interfata(tk.Frame):
         retea_label.grid(row=1, column=14, sticky=tk.SE, pady=2)
         retea_entry.grid(row=1, column=15, sticky=tk.SE, pady=2)
 
-        locatie_label.grid(row=3, column=14, sticky=tk.SE, pady=2)
-        locatie_entry.grid(row=3, column=15, sticky=tk.SE, pady=2)
 
         port_label.grid(row=5, column=14, sticky=tk.SE, pady=2)
         spinbox_port.grid(row=5, column=15, sticky=tk.SE, pady=2)

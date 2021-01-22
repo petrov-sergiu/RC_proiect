@@ -87,3 +87,15 @@ class Header:
         print("Headerul-> " + str(self.header))
         print("Header size->" + str(len(self.header)))
 
+    def setHeader1(self,msg):
+        self.header=msg
+        self.version=self.header[0:2]
+        self.type = self.header[2:4]
+        self.tokenLength = self.header[4:8]
+        self.codeClass = self.header[8:11]
+        self.codeDetail= self.header[11:16]
+        self.messageId = self.header[16:32]
+        if(self.getTokenLength()>0):
+            self.token = self.header[32:32+self.getTokenLength()]
+        else:
+            self.token=None

@@ -54,9 +54,9 @@ r.start('127.0.0.1', 5006)
 #hreading.Thread(target=r.send("127.0.0.1", 20001, COAP_DEFAULT.VERSION, 10, 4, COAP_METHOD.COAP_GET, 0, url)).start()
 
 r.sendPacket("127.0.0.1",20001,header,"Mesaj123")
-'''
-bytesToSend         = header.getPackege()
-serverAddressPort   = ("127.0.0.1", 20001)
+
+bytesToSend = header.getPackege()
+serverAddressPort = ("127.0.0.1", 20001)
 bufferSize          = 1024
 # Create a UDP socket at client side
 UDPClientSocket = socket.socket(family=socket.AF_INET, type=socket.SOCK_DGRAM)
@@ -68,5 +68,5 @@ msg = "Message from Server {}".format(msgFromServer[0])
 
 print(msg)
 
-print(stat)'''
+print(stat)
 

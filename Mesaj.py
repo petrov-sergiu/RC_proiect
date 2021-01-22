@@ -16,9 +16,10 @@ class Mesaj:
         if message != "":
             self.packet = self.packet+(str(message)).encode('UTF-8')
         return self.packet
-##############///////////////////
+
+
     def despachetarePacket(self):
-        despachetare=self.packet.decode('UTF-8')
+        despachetare=self.packet.decode('utf-8')
         tokenLen=4
         self.header=despachetare[0:32+tokenLen*8]
         self.message=despachetare[32+tokenLen*8]

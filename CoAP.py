@@ -1,5 +1,7 @@
 import socket
 import select
+import time
+
 from Header import *
 from Mesaj import Mesaj
 from random import randint
@@ -9,9 +11,7 @@ import threading
 
 class Coap:
     def __init__(self):
-        self.sock=None   #initializez socket cu none
-        self.callbacks={} #initializare fucntie de callbacks
-        self.responseCallback=None #raspunsul la functia callback initializat cu none
+        self.sock = None  #initializez socket cu none
         self.port=0  #initializarea portului
         self.result="" #initializarea rezultatului
 
@@ -125,12 +125,18 @@ class Coap:
 #//////////
     def loop(self, ip, port, header, mesaj, retransmit):
         global headerRecive
-        headerRecive=Header()
+
+        headerRecive = Header()
+        headerRecive.setHeader(1, 2, 4)
+        headerRecive.setCode(0, 0)
+        headerRecive.setMessageId(33)
+        headerRecive.setToken(70)
+        headerRecive.buildHeader()
         if header.getMessageType()==COAP_TYPE.COAP_CON:
             #Cand se trimite CON
             print("Se trimite CON!")
             self.sendPacket(ip, port, header, mesaj)
-
+            time.sleep(2)
             r,_,_=select.select([self.sock], [], [], COAP_DEFAULT.AKC_TIMEOUT)
             #Astept pt ACK
             if not r:
@@ -143,13 +149,15 @@ class Coap:
                     self.loop(ip, port, header, mesaj, retransmit)
                 else:
                     print("Am trimis catre server "+ str(COAP_DEFAULT.MAX_RETRANSMIT) + " CON-uri. Nu am primit nimic de la server!")
+                    return;
             else:
                 #Am primit ACK
                 headerRecive=Header()
                 buffer=Mesaj()
-                (data, addr)=self.readBytesFromSocket(COAP_DEFAULT.BUFFERMAX_SIZE)
-                buffer.set(data)
-                (header1, mesaj)=buffer.despachetarePacket()
+                (data, addr)=self.readBytesFromSocket(COAP_DEFAULT.BUFFER_MAX_SIZE)
+                print(data)
+                buffer.setPack(data)
+                (header1, mesaj) = buffer.despachetarePacket()
                 headerRecive.setHeader(header1)
                 headerRecive.buildHeader()
                 headerRecive.setCode(headerRecive.getCodeClass(), headerRecive.getCodeDetail())
@@ -194,7 +202,7 @@ class Coap:
                 headerRecive=Header()
                 mesaj1=Mesaj()
                 (buffer, addr)=self.readBytesFromSocket(COAP_DEFAULT.BUFFER_MAX_SIZE)
-                mesaj1.set(buffer)
+                mesaj1.setPack(buffer)
 
                 (header1, mesaj)=mesaj1.despachetarePacket()
                 headerRecive.setHeader(header1)
